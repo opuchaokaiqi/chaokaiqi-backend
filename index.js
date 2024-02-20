@@ -9,8 +9,8 @@ const connectToMongo = require('./mongooseConnect');
 const Products = require("./SchemaDesign/products.js")
 const Brands = require("./SchemaDesign/Brands.js")
 const Customer = require("./SchemaDesign/Customers.js")
-// const { Resend } = require('resend');
-// const resend = new Resend(process.env.RESEND_KEY);
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_KEY);
 
 // for firebase-function upload only 
 // const functions = require('firebase-functions');
@@ -22,7 +22,7 @@ app.use(cors())
 // getting products from start index to start + end index 
 app.get("/all-products/:start/:end", async (req, res) => {
     const start = req.params?.start ?? 0
-    const end = req.params?.end ?? 12
+    const end = req.params?.end ?? 36
 
     try {
         connectToMongo()
@@ -32,7 +32,7 @@ app.get("/all-products/:start/:end", async (req, res) => {
 
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).json("ERROR in getting the product for DB")
     }
 })
@@ -45,7 +45,7 @@ app.get("/random-products/:amount", async (req, res) => {
         const randomProducts = await Products.aggregate([{ $sample: { size: amount } }])
         res.json(randomProducts)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send("server error while getting the product")
     }
 })
@@ -60,7 +60,7 @@ app.get("/product/:id", async (req, res) => {
 
         res.json(product)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send("server error while getting the product")
     }
 })
@@ -72,7 +72,7 @@ app.get("/brands", async (req, res) => {
         const brands = await Brands.find()
         res.json(brands)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send("server error while getting the product")
     }
 })
@@ -88,7 +88,16 @@ app.get("/generateProducts", async (req, res) => {
         const workbook = XLSX.readFile('./ChaoKaiQiProducts.xlsx');
         // const sheetName = 'Snap rotate style'; // Specify the desired sheet name
         // const sheetName = 'Snap Closure Full Package'; // Specify the desired sheet name
-        const sheetName = 'Acrylic 360-Degree Rotating P'; // Specify the desired sheet name
+        // const sheetName = 'Acrylic 360-Degree Rotating P'; // Specify the desired sheet name
+        // const sheetName = 'Acrylic Two-in-One magnetic'; // Specify the desired sheet name
+        // const sheetName = 'AcrylicTwo-in-OneIntegratedS'; // Specify the desired sheet name
+        // const sheetName = 'Acrylic Two-in-One Y Fold Side'; // Specify the desired sheet name
+        // const sheetName = 'Skin-like Back Sticker Solid Co'; // Specify the desired sheet name
+        // const sheetName = 'Painted Back Sticker Solid Colo'; // Specify the desired sheet name
+        // const sheetName = 'Snowflake Pattern Anti-drop Tra'; // Specify the desired sheet name
+        // const sheetName = 'Solid Color TPU Side Sticker wi'; // Specify the desired sheet name
+        // const sheetName = 'Skin-like PC Side S'; // Specify the desired sheet name
+        // const sheetName = 'Skin-like transparent pen slot'; // Specify the desired sheet name
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet)
 
@@ -97,75 +106,33 @@ app.get("/generateProducts", async (req, res) => {
         jsonData.forEach(productData => {
             const col = {
                 black: "",
-                whiteIce: "",
                 deepGreen: "",
                 babyPink: "",
-                gray: "",
-                lavenderPurple: ""
+                lavenderPurple: "",
+                whiteIce: "",
+                // gray: "",
+                navyBlue: "",
+                matchaGreen: "",
+                lightPurple: "",
+                red: "",
+                // roseGold: ""
 
             }
 
             switch (productData["Compnay"]) {
-                case "Apple":
-                    col.black = "/ProductImages/Acrylic361DegreeRotatingP/colors/apple black"
-                    col.whiteIce = "/ProductImages/Acrylic365DegreeRotatingP/colors/apple whiteIce"
-                    col.babyPink = "/ProductImages/Acrylic360DegreeRotatingP/colors/apple babyPink"
-                    col.deepGreen = "/ProductImages/Acrylic362DegreeRotatingP/colors/apple deepGreen"
-                    col.gray = "/ProductImages/Acrylic363DegreeRotatingP/colors/apple gray"
-                    col.lavenderPurple = "/ProductImages/Acrylic364DegreeRotatingP/colors/apple lavanderPurple"
-                    break;
-
-                case "HONOR":
-                case "Huawei":
-                    col.black = "/ProductImages/Acrylic360DegreeRotatingP/colors/huawei (4)"
-                    col.whiteIce = "/ProductImages/Acrylic360DegreeRotatingP/colors/huawei (6)"
-                    col.babyPink = "/ProductImages/Acrylic360DegreeRotatingP/colors/huawei (3)"
-                    col.deepGreen = "/ProductImages/Acrylic360DegreeRotatingP/colors/huawei (5)"
-                    col.gray = "/ProductImages/Acrylic360DegreeRotatingP/colors/huawei (2)"
-                    col.lavenderPurple = "/ProductImages/Acrylic360DegreeRotatingP/colors/huawei (1)"
-                    break;
-
-
-                case "Lenovo":
-                case "Nokia":
-                case "OPPO":
-                    col.black = "/ProductImages/Acrylic360DegreeRotatingP/colors/oppo (2)"
-                    col.whiteIce = "/ProductImages/Acrylic360DegreeRotatingP/colors/oppo (4)"
-                    col.babyPink = "/ProductImages/Acrylic360DegreeRotatingP/colors/oppo (6)"
-                    col.deepGreen = "/ProductImages/Acrylic360DegreeRotatingP/colors/oppo (5)"
-                    col.gray = "/ProductImages/Acrylic360DegreeRotatingP/colors/oppo (1)"
-                    col.lavenderPurple = "/ProductImages/Acrylic360DegreeRotatingP/colors/oppo (3)"
-                    break
-
-
-                case "Samsung":
-                case "Vivo":
-                    col.black = "/ProductImages/Acrylic360DegreeRotatingP/colors/samsung (3)"
-                    col.whiteIce = "/ProductImages/Acrylic360DegreeRotatingP/colors/samsung (2)"
-                    col.babyPink = "/ProductImages/Acrylic360DegreeRotatingP/colors/samsung (5)"
-                    col.deepGreen = "/ProductImages/Acrylic360DegreeRotatingP/colors/samsung (4)"
-                    col.gray = "/ProductImages/Acrylic360DegreeRotatingP/colors/samsung (6)"
-                    col.lavenderPurple = "/ProductImages/Acrylic360DegreeRotatingP/colors/samsung (1)"
-                    break
-
-                case "Xiaomi":
-                    col.black = "/ProductImages/Acrylic360DegreeRotatingP/colors/xiaomi (6)"
-                    col.whiteIce = "/ProductImages/Acrylic360DegreeRotatingP/colors/xiaomi (3)"
-                    col.babyPink = "/ProductImages/Acrylic360DegreeRotatingP/colors/xiaomi (1)"
-                    col.deepGreen = "/ProductImages/Acrylic360DegreeRotatingP/colors/xiaomi (2)"
-                    col.gray = "/ProductImages/Acrylic360DegreeRotatingP/colors/xiaomi (5)"
-                    col.lavenderPurple = "/ProductImages/Acrylic360DegreeRotatingP/colors/xiaomi (4)"
-                    break
-
 
                 default:
-                    col.black = "/ProductImages/Acrylic361DegreeRotatingP/colors/apple black"
-                    col.whiteIce = "/ProductImages/Acrylic365DegreeRotatingP/colors/apple whiteIce"
-                    col.babyPink = "/ProductImages/Acrylic360DegreeRotatingP/colors/apple babyPink"
-                    col.deepGreen = "/ProductImages/Acrylic362DegreeRotatingP/colors/apple deepGreen"
-                    col.gray = "/ProductImages/Acrylic363DegreeRotatingP/colors/apple gray"
-                    col.lavenderPurple = "/ProductImages/Acrylic364DegreeRotatingP/colors/apple lavanderPurple"
+                    col.black = "/ProductImages/Skin-like transparent pen slot/colors/apple (9)"
+                    col.babyPink = "/ProductImages/Skin-like transparent pen slot/colors/apple (1)"
+                    col.deepGreen = "/ProductImages/Skin-like transparent pen slot/colors/apple (7)"
+                    col.lavenderPurple = "/ProductImages/Skin-like transparent pen slot/colors/apple (3)"
+                    col.lightPurple = "/ProductImages/Skin-like transparent pen slot/colors/apple (6)"
+                    col.matchaGreen = "/ProductImages/Skin-like transparent pen slot/colors/apple (2)"
+                    col.navyBlue = "/ProductImages/Skin-like transparent pen slot/colors/apple (8)"
+                    col.red = "/ProductImages/Skin-like transparent pen slot/colors/apple (5)"
+                    col.whiteIce = "/ProductImages/Skin-like transparent pen slot/colors/apple (4)"
                     break;
+
             }
 
             const product = {
@@ -187,11 +154,6 @@ app.get("/generateProducts", async (req, res) => {
                         colorValue: "#393A3D",
                         imgLink: col.black
                     },
-                    whiteIce: {
-                        name: "White Ice",
-                        colorValue: "#CCEAF9",
-                        imgLink: col.whiteIce
-                    },
                     deepGreen: {
                         name: "Deep Green",
                         colorValue: "#215142",
@@ -202,15 +164,40 @@ app.get("/generateProducts", async (req, res) => {
                         colorValue: "#E1CDCE",
                         imgLink: col.babyPink
                     },
-                    gray: {
-                        name: "Gray",
-                        colorValue: "#E5E3E6",
-                        imgLink: col.gray
-                    },
                     lavenderPurple: {
                         name: "Lavender Purple",
                         colorValue: "#6A6C9A",
                         imgLink: col.lavenderPurple,
+                    },
+                    whiteIce: {
+                        name: "White Ice",
+                        colorValue: "#CCEAF9",
+                        imgLink: col.whiteIce
+                    },
+                    navyBlue: {
+                        name: "Navy Blue",
+                        colorValue: "#182F45",
+                        imgLink: col.navyBlue,
+                    },
+                    red: {
+                        name: "Red",
+                        colorValue: "#D92727",
+                        imgLink: col.red,
+                    },
+                    // roseGold: {
+                    //     name: "Rose Gold",
+                    //     colorValue: "#D29393",
+                    //     imgLink: col.roseGold,
+                    // },
+                    matchaGreen: {
+                        name: "Matcha Green",
+                        colorValue: "#8FF2B7",
+                        imgLink: col.matchaGreen,
+                    },
+                    lightPurple: {
+                        name: "Light Purple",
+                        colorValue: "#D084FF",
+                        imgLink: col.lightPurple,
                     },
 
                 },
@@ -223,22 +210,22 @@ app.get("/generateProducts", async (req, res) => {
                 { $addToSet: { products: product.productName } },
                 { upsert: true, new: true }
             ).then(() => {
-                console.log("brand added")
+                // console.log("brand added")
             }).catch(error => {
-                console.log(error)
+                // console.log(error)
             })
 
             // adding products to db 
             const newProductData = new Products(product)
             newProductData.save()
-                .then((datax) => console.log("saved data: " + datax.length))
-                .catch(error => console.log(error))
+                // .then((datax) => console.log("saved data: " + datax.length))
+                // .catch(error => console.log(error))
         })
 
         res.send(productsArray)
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
     }
 })
 
@@ -248,7 +235,7 @@ app.delete('/delete', async (req, res) => {
     try {
         connectToMongo()
 
-        await Products.deleteMany({ coverName: /^Acrylic/ });
+        await Products.deleteMany({ coverName: "Acrylic (2.0A Board) Two-in-One Magnetic Detachable" });
         res.send('Documents deleted successfully.');
     } catch (error) {
         console.error(error);
@@ -275,7 +262,7 @@ app.get("/search", async (req, res) => {
 
         res.send(result)
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send("server error in search product api")
     }
 })
@@ -291,7 +278,7 @@ app.post("/selected-products", async (req, res) => {
         res.json(products)
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send("problem in server finding the data")
     }
 })
@@ -305,20 +292,61 @@ app.post("/mail-and-orders/:option", async (req, res) => {
         const newCustomer = new Customer(customerData)
         newCustomer.save()
 
-        if (option === "mail") {
+        let heading = option === "mail" ? "New client" : "New Order"
 
-            console.log(customerData)
+        let message = `
+                    <h1>${heading}</h1>
 
-        } else if (option === "order") {
-            const { customerData, order } = data
-            console.log("order and customerData")
+                    <p>Name: ${customerData.name}</p>
+                    <p>Email: ${customerData.email}</p>
+                    <p>Phone: ${customerData.phone}</p>
+                    <p>Country: ${customerData.country}</p>
+                    <p>Organization: ${customerData.organization}</p>
+                    <br>
+
+                    <p style="text-decoration: underline">Note :</p>
+                    <p>${customerData.note}</p>
+                    <br>
+        `
+
+        if (option === "order") {
+            const { cart } = req.body
+            // console.log(cart)
+
+            message += `<h3 style="font-weight: bold; text-decoration: underline;">Orders :</h3>`
+
+            cart.forEach(product => {
+                message += `
+                    <p>Model: ${product.productName}</p>
+                    <p>Brand: ${product.brand}</p>
+                    <p>Cover: ${product.coverName}</p>
+                    <p>Color: ${product.color.name} &nbsp;&nbsp;&nbsp;  color-value: ${product.color.colorValue}</p>
+                    <p>Order amount : ${product.orderAmount} units</p>
+                    <p>unit price : ${product.priceperUnit} USD</p>
+                    <p>Total price : ${product.totalPrice} USD</p>
+                    <hr>
+                `
+            })
+        }
+
+
+
+        const { data, error } = await resend.emails.send({
+            from: "ChaokaiqiWeb <webfunnel@chaokaiqi.com>",
+            to: ["opu.chaokaiqi@gmail.com","chaokaiqi@outlook.com"],
+            subject: "New Order",
+            html: message
+        })
+
+        if (error) {
+            // console.log(error)
         }
 
 
 
         res.send("collected successfully")
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send("couldn't process the data")
     }
 })
@@ -330,7 +358,7 @@ app.post("/mail-and-orders/:option", async (req, res) => {
 //delete this for firebase
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log("server is runnign on port", port)
+    // console.log("server is runnign on port", port)
 })
 
 // this part is for firebase
